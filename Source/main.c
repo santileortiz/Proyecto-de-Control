@@ -331,76 +331,67 @@ static void readYValue(void){
 
 }
 
-//int main(void)
-//{
-//  /*!< At this stage the microcontroller clock setting is already configured, 
-//       this is done through SystemInit() function which is called from startup
-//       file (startup_stm32f30x.s) before to branch to application main.
-//       To reconfigure the default setting of SystemInit() function, refer to
-//       system_stm32f30x.c file
-//     */ 
-//  /* Setup SysTick Timer for 1 µsec interrupts  */
-// if (SysTick_Config(SystemCoreClock / 1000000))
-//  { 
-//    /* Capture error */ 
-//    while (1)
-//    {}
-//  }
-
-//  /* Infinite loop */
-//  while (1)
-//  {
-//		
-//		/*Reading X Axis */
-//		readXValue();
-//    /* Test EOC flag */
-//    while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
-//		
-//    /* Get ADC1 converted data */
-//    ADC1ConvertedValue =ADC_GetConversionValue(ADC1);
-//    
-//    /* Compute the voltage */
-//    axisValueX = (ADC1ConvertedValue *3300)/0xFFF;
-//		
-// 		ADC_DeInit (ADC1);
-//		ADC_DeInit (ADC2);
-//		GPIO_DeInit (GPIOA);
-//		GPIO_DeInit (GPIOB);
-//		GPIO_DeInit (GPIOE);
-//		GPIO_DeInit (GPIOC);
-//		
-//		/*Reading Y Axis */
-//		readYValue();
-//		/* Test EOC flag */
-//		while(ADC_GetFlagStatus(ADC2, ADC_FLAG_EOC) == RESET);
-//		
-//    /* Get ADC2 converted data */
-//		ADC1ConvertedValue2 =ADC_GetConversionValue(ADC2);
-//    
-//    /* Compute the voltage */
-//		axisValueY = (ADC1ConvertedValue2 *3300)/0xFFF;
-
-//		ADC_DeInit (ADC1);
-//		ADC_DeInit (ADC2);
-//		GPIO_DeInit (GPIOA);
-//		GPIO_DeInit (GPIOB);
-//		GPIO_DeInit (GPIOE);
-//		GPIO_DeInit (GPIOC);
-//		
-//		
-//  }
-//}
-
 int main(void)
 {
+
   Set_System();
   Set_USBClock();
   USB_Interrupts_Config();
   USB_Init();
+  /*!< At this stage the microcontroller clock setting is already configured, 
+       this is done through SystemInit() function which is called from startup
+       file (startup_stm32f30x.s) before to branch to application main.
+       To reconfigure the default setting of SystemInit() function, refer to
+       system_stm32f30x.c file
+     */ 
+  /* Setup SysTick Timer for 1 µsec interrupts  */
+ if (SysTick_Config(SystemCoreClock / 1000000))
+  { 
+    /* Capture error */ 
+    while (1)
+    {}
+  }
 
-	
+  /* Infinite loop */
   while (1)
   {
+		
+		/*Reading X Axis */
+		readXValue();
+    /* Test EOC flag */
+    while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
+		
+    /* Get ADC1 converted data */
+    ADC1ConvertedValue =ADC_GetConversionValue(ADC1);
+    
+    /* Compute the voltage */
+    axisValueX = (ADC1ConvertedValue *3300)/0xFFF;
+		
+ 		ADC_DeInit (ADC1);
+		ADC_DeInit (ADC2);
+		GPIO_DeInit (GPIOA);
+		GPIO_DeInit (GPIOB);
+		GPIO_DeInit (GPIOE);
+		GPIO_DeInit (GPIOC);
+		
+		/*Reading Y Axis */
+		readYValue();
+		/* Test EOC flag */
+		while(ADC_GetFlagStatus(ADC2, ADC_FLAG_EOC) == RESET);
+		
+    /* Get ADC2 converted data */
+		ADC1ConvertedValue2 =ADC_GetConversionValue(ADC2);
+    
+    /* Compute the voltage */
+		axisValueY = (ADC1ConvertedValue2 *3300)/0xFFF;
+
+		ADC_DeInit (ADC1);
+		ADC_DeInit (ADC2);
+		GPIO_DeInit (GPIOA);
+		GPIO_DeInit (GPIOB);
+		GPIO_DeInit (GPIOE);
+		GPIO_DeInit (GPIOC);
+	
     if (bDeviceState == CONFIGURED)
     {
 			
@@ -433,5 +424,50 @@ int main(void)
 		}
       
     }
-  }
-} 
+ }
+}
+
+//int main(void)
+//{
+//  Set_System();
+//  Set_USBClock();
+//  USB_Interrupts_Config();
+//  USB_Init();
+
+//	
+//  while (1)
+//  {
+//    if (bDeviceState == CONFIGURED)
+//    {
+//			
+//			CDC_Receive_DATA();
+
+//			SetpointX=(float)Receive_Buffer[0];
+//			SetpointX=SetpointX*0.048046875f;
+//			SetpointY=(float)Receive_Buffer[1];
+//			SetpointY=SetpointY*0.064453125f;
+
+//			PosX=PosX+0.1f;
+//			PosY=PosY+0.1f;
+//			
+//			if (PosX==12.0f) PosX=0.1f;
+//			if (PosY==16.0f) PosY=0.1f;
+//			
+//			convParamSend();
+//			
+//			Send_Buffer[0]=SetX;
+//			Send_Buffer[1]=SetY;
+//			Send_Buffer[2]=LocX;
+//			Send_Buffer[3]=LocY;
+//			Send_Buffer[4]=ServoX;
+//			Send_Buffer[5]=ServoY;
+//      /*Check to see if we have data yet */
+//      if(Receive_length!=0){
+//      if (packet_sent == 1)
+//      CDC_Send_DATA ((unsigned char*)Send_Buffer,6);
+//      Receive_length = 0;
+//		}
+//      
+//    }
+//  }
+//} 
