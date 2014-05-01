@@ -149,11 +149,10 @@ void delaybyms(unsigned int j){
     for(k=10283;k!=0;k--); //10283 7198
 }
 
-void Delay(__IO uint32_t nTime)
-{ 
-  TimingDelay = nTime;
-
-  while(TimingDelay != 0);
+void delaybyus(unsigned int j){
+	unsigned char k;
+	while(j--)
+    for(k=8;k!=0;k--); //8
 }
 
 void convParamSend(void){
@@ -292,7 +291,7 @@ static void calibrateADC1(void){
   ADC_VoltageRegulatorCmd(ADC1, ENABLE);
   
   /* Insert delay equal to 10 µs */
-  Delay(10);
+  delaybyus(10);
   
   ADC_SelectCalibrationMode(ADC1, ADC_CalibrationMode_Single);
   ADC_StartCalibration(ADC1);
@@ -307,7 +306,7 @@ static void calibrateADC2(void){
   ADC_VoltageRegulatorCmd(ADC2, ENABLE);
   
   /* Insert delay equal to 10 µs */
-  Delay(10);
+  delaybyus(10);
  	
 	ADC_SelectCalibrationMode(ADC2, ADC_CalibrationMode_Single);
   ADC_StartCalibration(ADC2);
@@ -328,8 +327,7 @@ static void setupAdcPF4(void){
 	
 	/* Calling functions */
 	setupGpioAnalogPF4();
-	calibrateADC1();
-  
+	calibrateADC1();  
 
   ADC_StructInit(&ADC_InitStructure);
 
@@ -342,7 +340,7 @@ static void setupAdcPF4(void){
   ADC_CommonInit(ADC1, &ADC_CommonInitStructure);
 	
 	/* ADC1 configuration */
-  ADC_InitStructure.ADC_ContinuousConvMode = ADC_ContinuousConvMode_Enable;
+//  ADC_InitStructure.ADC_ContinuousConvMode = ADC_ContinuousConvMode_Enable; //CULPABLE
   ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b; 
   ADC_InitStructure.ADC_ExternalTrigConvEvent = ADC_ExternalTrigConvEvent_0;         
   ADC_InitStructure.ADC_ExternalTrigEventEdge = ADC_ExternalTrigEventEdge_None;
@@ -392,7 +390,7 @@ static void setupAdcPC4(void){
   ADC_CommonInit(ADC2, &ADC_CommonInitStructure);
 	
 	/* ADC2 configuration */
-  ADC_InitStructure.ADC_ContinuousConvMode = ADC_ContinuousConvMode_Enable;
+//  ADC_InitStructure.ADC_ContinuousConvMode = ADC_ContinuousConvMode_Enable; //CULPABLE
   ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b; 
   ADC_InitStructure.ADC_ExternalTrigConvEvent = ADC_ExternalTrigConvEvent_0;         
   ADC_InitStructure.ADC_ExternalTrigEventEdge = ADC_ExternalTrigEventEdge_None;
@@ -531,47 +529,3 @@ int main(void)
  }
 }
 
-//int main(void)
-//{
-//  Set_System();
-//  Set_USBClock();
-//  USB_Interrupts_Config();
-//  USB_Init();
-
-//	
-//  while (1)
-//  {
-//    if (bDeviceState == CONFIGURED)
-//    {
-//			
-//			CDC_Receive_DATA();
-
-//			SetpointX=(float)Receive_Buffer[0];
-//			SetpointX=SetpointX*0.048046875f;
-//			SetpointY=(float)Receive_Buffer[1];
-//			SetpointY=SetpointY*0.064453125f;
-
-//			PosX=PosX+0.1f;
-//			PosY=PosY+0.1f;
-//			
-//			if (PosX==12.0f) PosX=0.1f;
-//			if (PosY==16.0f) PosY=0.1f;
-//			
-//			convParamSend();
-//			
-//			Send_Buffer[0]=SetX;
-//			Send_Buffer[1]=SetY;
-//			Send_Buffer[2]=LocX;
-//			Send_Buffer[3]=LocY;
-//			Send_Buffer[4]=ServoX;
-//			Send_Buffer[5]=ServoY;
-//      /*Check to see if we have data yet */
-//      if(Receive_length!=0){
-//      if (packet_sent == 1)
-//      CDC_Send_DATA ((unsigned char*)Send_Buffer,6);
-//      Receive_length = 0;
-//		}
-//      
-//    }
-//  }
-//} 
