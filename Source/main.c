@@ -36,6 +36,7 @@ uint32_t packet_sent=1;
 uint32_t packet_receive=1;
 
 __IO uint16_t  ADC1ConvertedValue = 0, ADC1ConvertedValue2 = 0, axisValueX = 0, axisValueY = 0, calibration_value = 0, calibration_value2 = 0;
+float axisValueYcm = 0.0f, axisValueXcm = 0.0f;
 __IO uint32_t TimingDelay = 0;
 
 static void Servos_Config(void)
@@ -129,17 +130,17 @@ static void Servos_Config(void)
 
 void set_motor1(float theta1){ // theta1 -> grados
 	float pulse_width;
-	if(theta1<-1.5708) pulse_width = 1516.070f;
-	else if (theta1>1.5708) pulse_width = 7369.5499f;
-	else pulse_width =	3*(621.0734637f*(theta1+1.5708) + 505.356813f); // == 10.8398*thetagrad + 505.357 (el 3 convierte los us a ciclos del CPU)
+	if(theta1<-1.5708f) pulse_width = 1516.070f;
+	else if (theta1>1.5708f) pulse_width = 7369.5499f;
+	else pulse_width =	3*(621.0734637f*(theta1+1.5708f) + 505.356813f); // == 10.8398*thetagrad + 505.357 (el 3 convierte los us a ciclos del CPU)
 	TIM1->CCR1 = (int)pulse_width;
 }
 
 void set_motor2(float theta1){ // theta1 -> grados
 	float pulse_width;
-	if(theta1<-1.5708) pulse_width = 1544.032258f;
-	else if (theta1>1.5708) pulse_width = 7350.48387f;
-	else pulse_width =	3*(616.08365f*(theta1+1.5708) + 514.677f); // == 10.8398*thetagrad + 505.357 (el 3 convierte los us a ciclos del CPU)
+	if(theta1<-1.5708f) pulse_width = 1544.032258f;
+	else if (theta1>1.5708f) pulse_width = 7350.48387f;
+	else pulse_width =	3*(616.08365f*(theta1+1.5708f) + 514.677f); // == 10.8398*thetagrad + 505.357 (el 3 convierte los us a ciclos del CPU)
 	TIM1->CCR2 = (int)pulse_width;
 }
 
@@ -476,6 +477,7 @@ int main(void)
     
     /* Compute the voltage */
     axisValueX = (ADC1ConvertedValue *3300)/0xFFF;
+		axisValueXcm = ((((axisValueX - 0.22333)/(0.178))/1000)-9.2)/100.0;
 		
  		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
@@ -490,6 +492,7 @@ int main(void)
     
     /* Compute the voltage */
 		axisValueY = (ADC1ConvertedValue2 *3300)/0xFFF;
+		axisValueYcm = ((((axisValueY - 0.4063)/(0.204))/1000)-8.4)/100.0;
 
 		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
@@ -523,9 +526,8 @@ int main(void)
       if (packet_sent == 1)
       CDC_Send_DATA ((unsigned char*)Send_Buffer,6);
       Receive_length = 0;
-		}
-      
-    }
+		  }    
+  }
  }
 }
 
