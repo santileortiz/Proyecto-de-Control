@@ -9,6 +9,7 @@
 
 * Includes ------------------------------------------------------------------**/
 #include "stm32f30x.h"
+#include "main.h"
 
 /*Variables para Controlador*/
 float SetpointX=3.3f;
@@ -330,65 +331,65 @@ static void readYValue(void){
 
 }
 
-int main(void)
-{
-  /*!< At this stage the microcontroller clock setting is already configured, 
-       this is done through SystemInit() function which is called from startup
-       file (startup_stm32f30x.s) before to branch to application main.
-       To reconfigure the default setting of SystemInit() function, refer to
-       system_stm32f30x.c file
-     */ 
-  /* Setup SysTick Timer for 1 µsec interrupts  */
- if (SysTick_Config(SystemCoreClock / 1000000))
-  { 
-    /* Capture error */ 
-    while (1)
-    {}
-  }
+//int main(void)
+//{
+//  /*!< At this stage the microcontroller clock setting is already configured, 
+//       this is done through SystemInit() function which is called from startup
+//       file (startup_stm32f30x.s) before to branch to application main.
+//       To reconfigure the default setting of SystemInit() function, refer to
+//       system_stm32f30x.c file
+//     */ 
+//  /* Setup SysTick Timer for 1 µsec interrupts  */
+// if (SysTick_Config(SystemCoreClock / 1000000))
+//  { 
+//    /* Capture error */ 
+//    while (1)
+//    {}
+//  }
 
-  /* Infinite loop */
-  while (1)
-  {
-		
-		/*Reading X Axis */
-		readXValue();
-    /* Test EOC flag */
-    while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
-		
-    /* Get ADC1 converted data */
-    ADC1ConvertedValue =ADC_GetConversionValue(ADC1);
-    
-    /* Compute the voltage */
-    axisValueX = (ADC1ConvertedValue *3300)/0xFFF;
-		
- 		ADC_DeInit (ADC1);
-		ADC_DeInit (ADC2);
-		GPIO_DeInit (GPIOA);
-		GPIO_DeInit (GPIOB);
-		GPIO_DeInit (GPIOE);
-		GPIO_DeInit (GPIOC);
-		
-		/*Reading Y Axis */
-		readYValue();
-		/* Test EOC flag */
-		while(ADC_GetFlagStatus(ADC2, ADC_FLAG_EOC) == RESET);
-		
-    /* Get ADC2 converted data */
-		ADC1ConvertedValue2 =ADC_GetConversionValue(ADC2);
-    
-    /* Compute the voltage */
-		axisValueY = (ADC1ConvertedValue2 *3300)/0xFFF;
+//  /* Infinite loop */
+//  while (1)
+//  {
+//		
+//		/*Reading X Axis */
+//		readXValue();
+//    /* Test EOC flag */
+//    while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
+//		
+//    /* Get ADC1 converted data */
+//    ADC1ConvertedValue =ADC_GetConversionValue(ADC1);
+//    
+//    /* Compute the voltage */
+//    axisValueX = (ADC1ConvertedValue *3300)/0xFFF;
+//		
+// 		ADC_DeInit (ADC1);
+//		ADC_DeInit (ADC2);
+//		GPIO_DeInit (GPIOA);
+//		GPIO_DeInit (GPIOB);
+//		GPIO_DeInit (GPIOE);
+//		GPIO_DeInit (GPIOC);
+//		
+//		/*Reading Y Axis */
+//		readYValue();
+//		/* Test EOC flag */
+//		while(ADC_GetFlagStatus(ADC2, ADC_FLAG_EOC) == RESET);
+//		
+//    /* Get ADC2 converted data */
+//		ADC1ConvertedValue2 =ADC_GetConversionValue(ADC2);
+//    
+//    /* Compute the voltage */
+//		axisValueY = (ADC1ConvertedValue2 *3300)/0xFFF;
 
-		ADC_DeInit (ADC1);
-		ADC_DeInit (ADC2);
-		GPIO_DeInit (GPIOA);
-		GPIO_DeInit (GPIOB);
-		GPIO_DeInit (GPIOE);
-		GPIO_DeInit (GPIOC);
-		
-		
-  }
-}
+//		ADC_DeInit (ADC1);
+//		ADC_DeInit (ADC2);
+//		GPIO_DeInit (GPIOA);
+//		GPIO_DeInit (GPIOB);
+//		GPIO_DeInit (GPIOE);
+//		GPIO_DeInit (GPIOC);
+//		
+//		
+//  }
+//}
 
 int main(void)
 {
