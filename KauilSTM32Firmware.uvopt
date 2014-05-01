@@ -203,7 +203,11 @@
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>1</TopLine>
+<<<<<<< HEAD
       <CurrentLine>12</CurrentLine>
+=======
+      <CurrentLine>86</CurrentLine>
+>>>>>>> Alejandro
       <bDave2>0</bDave2>
       <PathWithFileName>.\Source\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -218,8 +222,13 @@
       <Focus>0</Focus>
       <ColumnNumber>32</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
+<<<<<<< HEAD
       <TopLine>49</TopLine>
       <CurrentLine>53</CurrentLine>
+=======
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
+>>>>>>> Alejandro
       <bDave2>0</bDave2>
       <PathWithFileName>.\Source\stm32f30x_it.c</PathWithFileName>
       <FilenameWithoutPath>stm32f30x_it.c</FilenameWithoutPath>
@@ -754,8 +763,13 @@
       <Focus>0</Focus>
       <ColumnNumber>3</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
+<<<<<<< HEAD
       <TopLine>11</TopLine>
       <CurrentLine>12</CurrentLine>
+=======
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
+>>>>>>> Alejandro
       <bDave2>0</bDave2>
       <PathWithFileName>.\Source\USB_ApplicationInterface\hw_config.c</PathWithFileName>
       <FilenameWithoutPath>hw_config.c</FilenameWithoutPath>
