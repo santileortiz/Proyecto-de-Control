@@ -456,59 +456,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Encoders</GroupName>
-        </Group>
-        <Group>
-          <GroupName>Orientation</GroupName>
-          <Files>
-            <File>
-              <FileName>stm32f3_discovery_lsm303dlhc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\Orientation\stm32f3_discovery_lsm303dlhc.c</FilePath>
-            </File>
-            <File>
-              <FileName>imu_util.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\Orientation\imu_util.c</FilePath>
-            </File>
-            <File>
-              <FileName>KalmanAHRS.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\Orientation\KalmanAHRS.c</FilePath>
-            </File>
-            <File>
-              <FileName>MadgwickAHRS.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\Orientation\MadgwickAHRS.c</FilePath>
-            </File>
-            <File>
-              <FileName>MadgwickFullAHRS.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\Orientation\MadgwickFullAHRS.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f3_discovery.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\Orientation\stm32f3_discovery.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f3_discovery_l3gd20.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\Orientation\stm32f3_discovery_l3gd20.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Misc</GroupName>
-          <Files>
-            <File>
-              <FileName>delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Source\Misc\delay.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>PeripheralDrivers</GroupName>
           <Files>
             <File>

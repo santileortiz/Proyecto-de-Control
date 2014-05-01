@@ -50,7 +50,7 @@
 /******************************************************************************/
 
 long unsigned int SysTickCount = 0;
-static __IO uint32_t TimingDelay = 0;
+extern __IO uint32_t TimingDelay;
 
 /**
   * @brief  This function handles NMI exception.
@@ -147,11 +147,7 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-	SysTickCount++;
-	if (TimingDelay != 0x00)
-	{ 
 		TimingDelay--;
-	}
 }
 
 /******************************************************************************/
