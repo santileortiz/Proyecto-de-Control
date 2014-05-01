@@ -481,10 +481,6 @@ int main(void)
 		
  		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
-		GPIO_DeInit (GPIOA);
-		GPIO_DeInit (GPIOB);
-		GPIO_DeInit (GPIOE);
-		GPIO_DeInit (GPIOC);
 		
 		/*Reading Y Axis */
 		readYValue();
@@ -499,10 +495,6 @@ int main(void)
 
 		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
-		GPIO_DeInit (GPIOA);
-		GPIO_DeInit (GPIOB);
-		GPIO_DeInit (GPIOE);
-		GPIO_DeInit (GPIOC);
 	
     if (bDeviceState == CONFIGURED)
     {
