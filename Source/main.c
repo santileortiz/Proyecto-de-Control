@@ -10,6 +10,13 @@
 * Includes ------------------------------------------------------------------**/
 #include "stm32f30x.h"
 
+extern __IO uint8_t Receive_Buffer[6];
+extern __IO  uint32_t Receive_length ;
+extern __IO  uint32_t length ;
+uint8_t Send_Buffer[6];
+uint32_t packet_sent=1;
+uint32_t packet_receive=1;
+
 __IO uint16_t  ADC1ConvertedValue = 0, ADC1ConvertedValue2 = 0, axisValueX = 0, axisValueY = 0, calibration_value = 0, calibration_value2 = 0;
 __IO uint32_t TimingDelay = 0;
 
