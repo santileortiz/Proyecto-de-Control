@@ -129,16 +129,16 @@ static void Servos_Config(void)
 
 void set_motor1(float theta1){ // theta1 -> grados
 	float pulse_width;
-	if(theta1<-1.5708) pulse_width = 1516.070;
-	else if (theta1>1.5708) pulse_width = 7369.5499;
+	if(theta1<-1.5708) pulse_width = 1516.070f;
+	else if (theta1>1.5708) pulse_width = 7369.5499f;
 	else pulse_width =	3*(621.0734637f*(theta1+1.5708) + 505.356813f); // == 10.8398*thetagrad + 505.357 (el 3 convierte los us a ciclos del CPU)
 	TIM1->CCR1 = (int)pulse_width;
 }
 
 void set_motor2(float theta1){ // theta1 -> grados
 	float pulse_width;
-	if(theta1<-1.5708) pulse_width = 1544.032258;
-	else if (theta1>1.5708) pulse_width = 7350.48387;
+	if(theta1<-1.5708) pulse_width = 1544.032258f;
+	else if (theta1>1.5708) pulse_width = 7350.48387f;
 	else pulse_width =	3*(616.08365f*(theta1+1.5708) + 514.677f); // == 10.8398*thetagrad + 505.357 (el 3 convierte los us a ciclos del CPU)
 	TIM1->CCR2 = (int)pulse_width;
 }
