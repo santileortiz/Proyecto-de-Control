@@ -20,10 +20,10 @@ float PosX=0.1f;
 float PosY=0.1f;
 
 /*Variables para HMI*/
-uint8_t SetX;
-uint8_t SetY;
-uint8_t LocX;
-uint8_t LocY;
+int8_t SetX;
+int8_t SetY;
+int8_t LocX;
+int8_t LocY;
 uint8_t ServoX;
 uint8_t ServoY;
 
@@ -36,7 +36,7 @@ uint32_t packet_sent=1;
 uint32_t packet_receive=1;
 
 __IO uint16_t  ADC1ConvertedValue = 0, ADC1ConvertedValue2 = 0, axisValueX = 0, axisValueY = 0, calibration_value = 0, calibration_value2 = 0;
-float axisValueYcm = 0.0f, axisValueXcm = 0.0f;
+float axisValueYm = 0.0f, axisValueXm = 0.0f;
 __IO uint32_t TimingDelay = 0;
 
 static void Servos_Config(void)
@@ -157,12 +157,12 @@ void delaybyus(unsigned int j){
 }
 
 void convParamSend(void){
-	SetX=(uint8_t)(SetpointX/0.048046875f);
-	SetY=(uint8_t)(SetpointY/0.064453125f);
+	SetX=(int8_t)(SetpointX/0.048046875f);
+	SetY=(int8_t)(SetpointY/0.064453125f);
 	ServoX=(uint8_t)(ServomotorX);
 	ServoY=(uint8_t)(ServomotorY);
-	LocX=(uint8_t)(PosX/0.048046875f);
-	LocY=(uint8_t)(PosY/0.064453125f);
+	LocX=(int8_t)(PosX/0.048046875f);
+	LocY=(int8_t)(PosY/0.064453125f);
 }
 	
 static void setupGpioAnalogPC4(void){
@@ -477,7 +477,7 @@ int main(void)
     
     /* Compute the voltage */
     axisValueX = (ADC1ConvertedValue *3300)/0xFFF;
-		axisValueXcm = ((((axisValueX - 0.22333)/(0.178))/1000)-9.2)/100.0;
+		axisValueXm = ((((axisValueX - 0.22333)/(0.178))/1000)-9.2)/100.0;
 		
  		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
@@ -492,7 +492,7 @@ int main(void)
     
     /* Compute the voltage */
 		axisValueY = (ADC1ConvertedValue2 *3300)/0xFFF;
-		axisValueYcm = ((((axisValueY - 0.4063)/(0.204))/1000)-8.4)/100.0;
+		axisValueYm = ((((axisValueY - 0.4063)/(0.204))/1000)-8.4)/100.0;
 
 		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
@@ -507,11 +507,8 @@ int main(void)
 			SetpointY=(float)Receive_Buffer[1];
 			SetpointY=SetpointY*0.064453125f;
 
-			PosX=PosX+0.1f;
-			PosY=PosY+0.1f;
-			
-			if (PosX==12.0f) PosX=0.1f;
-			if (PosY==16.0f) PosY=0.1f;
+			PosX=axisValueXm*100.0;
+			PosY=axisValueYm*100.0;
 			
 			convParamSend();
 			
