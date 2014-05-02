@@ -476,8 +476,7 @@ int main(void)
     ADC1ConvertedValue =ADC_GetConversionValue(ADC1);
     
     /* Compute the voltage */
-    axisValueX = (ADC1ConvertedValue *3300)/0xFFF;
-		axisValueXm = ((((axisValueX - 0.22333)/(0.178))/1000)-9.2)/100.0;
+		axisValueXm = ((ADC1ConvertedValue-191.87f)/22248.0f)-0.083f;
 		
  		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
@@ -491,8 +490,7 @@ int main(void)
 		ADC1ConvertedValue2 =ADC_GetConversionValue(ADC2);
     
     /* Compute the voltage */
-		axisValueY = (ADC1ConvertedValue2 *3300)/0xFFF;
-		axisValueYm = ((((axisValueY - 0.4063)/(0.204))/1000)-8.4)/100.0;
+		axisValueYm = ((ADC1ConvertedValue2-385.7f)/27229.0f)-0.0625f;
 
 		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
@@ -507,8 +505,8 @@ int main(void)
 			SetpointY=(float)Receive_Buffer[1];
 			SetpointY=SetpointY*0.064453125f;
 
-			PosX=axisValueXm*100.0;
-			PosY=axisValueYm*100.0;
+			PosX=(axisValueXm*100.0);
+			PosY=(axisValueYm*100.0);
 			
 			convParamSend();
 			
