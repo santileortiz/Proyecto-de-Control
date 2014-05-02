@@ -1,4 +1,4 @@
-Kauil_STM32
+Sistema Ball and Plate
 ===========
 
-Contiene código correspondiente a la tarjeta STM32F3Discovery
+Contiene el codigo de un sistema de control Ball and Plate implementado sobre la STM32
