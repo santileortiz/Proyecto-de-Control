@@ -14,8 +14,8 @@
 /*Variables para Controlador*/
 float SetpointX=3.3f;
 float SetpointY=6.5f;
-uint8_t ServomotorX=90;
-uint8_t ServomotorY=90;
+int8_t ServomotorX=90;
+int8_t ServomotorY=-90;
 float PosX=0.1f;
 float PosY=0.1f;
 
@@ -24,14 +24,14 @@ int8_t SetX;
 int8_t SetY;
 int8_t LocX;
 int8_t LocY;
-uint8_t ServoX;
-uint8_t ServoY;
+int8_t ServoX;
+int8_t ServoY;
 
 /*Variables para USB*/
 extern __IO uint8_t Receive_Buffer[6];
 extern __IO  uint32_t Receive_length ;
 extern __IO  uint32_t length ;
-uint8_t Send_Buffer[6];
+int8_t Send_Buffer[6];
 uint32_t packet_sent=1;
 uint32_t packet_receive=1;
 
@@ -157,12 +157,12 @@ void delaybyus(unsigned int j){
 }
 
 void convParamSend(void){
-	SetX=(int8_t)(SetpointX/0.048046875f);
-	SetY=(int8_t)(SetpointY/0.064453125f);
-	ServoX=(uint8_t)(ServomotorX);
-	ServoY=(uint8_t)(ServomotorY);
-	LocX=(int8_t)(PosX/0.048046875f);
-	LocY=(int8_t)(PosY/0.064453125f);
+	SetX=(int8_t)(SetpointX/0.064960f);
+	SetY=(int8_t)(SetpointY/0.0484252f);
+	ServoX=(int8_t)(ServomotorX);
+	ServoY=(int8_t)(ServomotorY);
+	LocX=(int8_t)(PosX/0.064960f);
+	LocY=(int8_t)(PosY/0.0484252f);
 }
 	
 static void setupGpioAnalogPC4(void){
@@ -501,12 +501,12 @@ int main(void)
 			CDC_Receive_DATA();
 
 			SetpointX=(float)Receive_Buffer[0];
-			SetpointX=SetpointX*0.048046875f;
+			SetpointX=SetpointX*0.064960f;
 			SetpointY=(float)Receive_Buffer[1];
-			SetpointY=SetpointY*0.064453125f;
+			SetpointY=SetpointY*0.0484252f;
 
-			PosX=(axisValueXm*100.0);
-			PosY=(axisValueYm*100.0);
+			PosX=(axisValueXm)*100.0f;
+			PosY=(axisValueYm)*100.0f;
 			
 			convParamSend();
 			
