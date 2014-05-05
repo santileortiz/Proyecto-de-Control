@@ -39,6 +39,14 @@ __IO uint16_t  ADC1ConvertedValue = 0, ADC1ConvertedValue2 = 0, axisValueX = 0, 
 float axisValueYm = 0.0f, axisValueXm = 0.0f;
 __IO uint32_t TimingDelay = 0;
 
+/*Variables para el control*/
+float theta1 = 0;
+float theta2 = 0;
+float Xarr[] = {0,0,0};
+float Yarr[] = {0,0,0};
+float theta1arr[] = {0,0};
+float theta2arr[] = {0,0};
+
 static void Servos_Config(void)
 {
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -133,15 +141,15 @@ void set_motor1(float theta1){ // theta1 -> grados
 	if(theta1<-1.5708f) pulse_width = 1516.070f;
 	else if (theta1>1.5708f) pulse_width = 7369.5499f;
 	else pulse_width =	3*(621.0734637f*(theta1+1.5708f) + 505.356813f); // == 10.8398*thetagrad + 505.357 (el 3 convierte los us a ciclos del CPU)
-	TIM1->CCR1 = (int)pulse_width;
+	TIM1->CCR2 = (int)pulse_width;
 }
 
-void set_motor2(float theta1){ // theta1 -> grados
+void set_motor2(float theta2){ // theta1 -> grados
 	float pulse_width;
-	if(theta1<-1.5708f) pulse_width = 1544.032258f;
-	else if (theta1>1.5708f) pulse_width = 7350.48387f;
-	else pulse_width =	3*(616.08365f*(theta1+1.5708f) + 514.677f); // == 10.8398*thetagrad + 505.357 (el 3 convierte los us a ciclos del CPU)
-	TIM1->CCR2 = (int)pulse_width;
+	if(theta2>1.5708f) pulse_width = 1544.032258f;
+	else if (theta2<-1.5708f) pulse_width = 7350.48387f;
+	else pulse_width =	3*(2428.279568f - 616.08365f*(1.5708f+theta2)); // == 10.8398*thetagrad + 505.357 (el 3 convierte los us a ciclos del CPU)
+	TIM1->CCR1 = (int)pulse_width;
 }
 
 void delaybyms(unsigned int j){
@@ -441,14 +449,51 @@ static void readYValue(void){
 
 }
 
+void rotArray(float *p_arr, int arr_len){
+	int i;
+	for(i=arr_len-1; i>0; i--){
+		p_arr[i] = p_arr[i-1];
+	}
+}
+
+void leyDeControlX(float xCoord){
+	float ley;
+	rotArray(Xarr, 3);
+	Xarr[0] = axisValueXm;
+	ley = -10.219f*Xarr[0]+18.496f*Xarr[1]-8.6043f*Xarr[2]+1.996f*theta1arr[0]-0.99216f*theta1arr[1];
+	if (ley > 0.1)
+		ley = 0.1;
+	else if (ley <-0.1)
+		ley = -0.1;
+	rotArray(theta1arr, 2);
+	theta1arr[0] = ley;
+	set_motor1(theta1arr[0]);
+}
+
+void leyDeControlY(float yCoord){
+	float ley;
+	rotArray(Yarr, 3);
+	Yarr[0] = axisValueYm;
+	ley = -10.219f*Yarr[0]+18.496f*Yarr[1]-8.6043f*Yarr[2]+1.996f*theta2arr[0]-0.99216f*theta2arr[1];
+	if (ley > 0.1)
+		ley = 0.1;
+	else if (ley <-0.1)
+		ley = -0.1;
+	rotArray(theta2arr, 2);
+	theta2arr[0] = ley;
+	set_motor2(theta2arr[0]);
+}
+
 int main(void)
 {
 
   Set_System();
-  Set_USBClock();
-  USB_Interrupts_Config();
-  USB_Init();
+//  Set_USBClock();
+//  USB_Interrupts_Config();
+//  USB_Init();
 	Servos_Config();
+	set_motor1(0.0f); //0.08726646f
+	set_motor2(0.0f);
   /*!< At this stage the microcontroller clock setting is already configured, 
        this is done through SystemInit() function which is called from startup
        file (startup_stm32f30x.s) before to branch to application main.
@@ -494,35 +539,40 @@ int main(void)
 
 		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
+		
+		leyDeControlX(axisValueXm);
+		leyDeControlY(axisValueYm);
 	
-    if (bDeviceState == CONFIGURED)
-    {
-			
-			CDC_Receive_DATA();
+//    if (bDeviceState == CONFIGURED)
+//    {
+//			
+//			//CDC_Receive_DATA();
 
-			SetpointX=(float)Receive_Buffer[0];
-			SetpointX=SetpointX*0.064960f;
-			SetpointY=(float)Receive_Buffer[1];
-			SetpointY=SetpointY*0.0484252f;
+//			SetpointX=(float)Receive_Buffer[0];
+//			SetpointX=SetpointX*0.064960f;
+//			SetpointY=(float)Receive_Buffer[1];
+//			SetpointY=SetpointY*0.0484252f;
+//			
+//			
 
-			PosX=(axisValueXm)*100.0f;
-			PosY=(axisValueYm)*100.0f;
-			
-			convParamSend();
-			
-			Send_Buffer[0]=SetX;
-			Send_Buffer[1]=SetY;
-			Send_Buffer[2]=LocX;
-			Send_Buffer[3]=LocY;
-			Send_Buffer[4]=ServoX;
-			Send_Buffer[5]=ServoY;
-      /*Check to see if we have data yet */
-      if(Receive_length!=0){
-      if (packet_sent == 1)
-      CDC_Send_DATA ((unsigned char*)Send_Buffer,6);
-      Receive_length = 0;
-		  }    
-  }
+//			PosX=(axisValueXm)*100.0f;
+//			PosY=(axisValueYm)*100.0f;
+//			
+//			convParamSend();
+//			
+//			Send_Buffer[0]=SetX;
+//			Send_Buffer[1]=SetY;
+//			Send_Buffer[2]=LocX;
+//			Send_Buffer[3]=LocY;
+//			Send_Buffer[4]=ServoX;
+//			Send_Buffer[5]=ServoY;
+//      /*Check to see if we have data yet */
+//      if(Receive_length!=0){
+//      if (packet_sent == 1)
+//      CDC_Send_DATA ((unsigned char*)Send_Buffer,6);
+//      Receive_length = 0;
+//		  }    
+//  }
  }
 }
 
