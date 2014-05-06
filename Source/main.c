@@ -458,30 +458,26 @@ void rotArray(float *p_arr, int arr_len){
 
 void leyDeControlX(float xCoord){
 	float ley;
-	rotArray(Xarr, 3);
+	rotArray(Xarr, 2);
 	Xarr[0] = axisValueXm;
-	ley = -10.219f*Xarr[0]+18.496f*Xarr[1]-8.6043f*Xarr[2]+1.996f*theta1arr[0]-0.99216f*theta1arr[1];
-	if (ley > 0.1)
-		ley = 0.1;
-	else if (ley <-0.1)
-		ley = -0.1;
-	rotArray(theta1arr, 2);
-	theta1arr[0] = ley;
-	set_motor1(theta1arr[0]);
+	ley = 7.7652*Xarr[0]+15.07*Xarr[1];
+	if (ley > 0.3)
+		ley = 0.3;
+	else if (ley <-0.3)
+		ley = -0.3;
+	set_motor1(-ley);
 }
 
 void leyDeControlY(float yCoord){
 	float ley;
-	rotArray(Yarr, 3);
+	rotArray(Yarr, 2);
 	Yarr[0] = axisValueYm;
-	ley = -10.219f*Yarr[0]+18.496f*Yarr[1]-8.6043f*Yarr[2]+1.996f*theta2arr[0]-0.99216f*theta2arr[1];
+	ley = 7.7652*Yarr[0]+15.07*Yarr[1];	
 	if (ley > 0.1)
 		ley = 0.1;
 	else if (ley <-0.1)
 		ley = -0.1;
-	rotArray(theta2arr, 2);
-	theta2arr[0] = ley;
-	set_motor2(theta2arr[0]);
+	set_motor2(-ley);
 }
 
 int main(void)
@@ -542,6 +538,7 @@ int main(void)
 		
 		leyDeControlX(axisValueXm);
 		leyDeControlY(axisValueYm);
+		//delaybyms(1);
 	
 //    if (bDeviceState == CONFIGURED)
 //    {
