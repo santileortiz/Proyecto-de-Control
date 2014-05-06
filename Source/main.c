@@ -467,11 +467,11 @@ void leyDeControlX(float xCoord){
 //		ley = -0.2;
 //	rotArray(theta1arr, 2);
 //	theta1arr[0] = ley;
-	set_motor1(-2.18166f*axisValueXm);
-	if (ley > 0.174533)
-		ley = 0.174533;
-	else if (ley <-0.174533)
-		ley = -0.174533;
+	set_motor1(-6.54498*axisValueXm);
+	if (ley > 0.523599)
+		ley = 0.523599;
+	else if (ley <-0.523599)
+		ley = -0.523599;
 }
 
 void leyDeControlY(float yCoord){
@@ -485,11 +485,11 @@ void leyDeControlY(float yCoord){
 //		ley = -0.2;
 //	rotArray(theta2arr, 2);
 //	theta2arr[0] = ley;
-	set_motor2(-2.79253f*axisValueYm);
-	if (ley > 0.174533)
-		ley = 0.174533;
-	else if (ley <-0.174533)
-		ley = -0.174533;
+	set_motor2(-8.37758*axisValueYm);
+	if (ley > 0.523599)
+		ley = 0.523599;
+	else if (ley <-0.523599)
+		ley = -0.523599;
 }
 
 int main(void)
