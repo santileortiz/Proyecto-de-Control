@@ -460,11 +460,11 @@ void leyDeControlX(float xCoord){
 	float ley;
 	rotArray(Xarr, 2);
 	Xarr[0] = axisValueXm;
-	ley = 7.7652*Xarr[0]+15.07*Xarr[1];
-	if (ley > 0.3)
-		ley = 0.3;
-	else if (ley <-0.3)
-		ley = -0.3;
+	ley = 7.7652*Xarr[0]-6.5305*Xarr[1];
+	if (ley > 0.4)
+		ley = 0.4;
+	else if (ley <-0.4)
+		ley = -0.4;
 	set_motor1(-ley);
 }
 
@@ -472,11 +472,11 @@ void leyDeControlY(float yCoord){
 	float ley;
 	rotArray(Yarr, 2);
 	Yarr[0] = axisValueYm;
-	ley = 7.7652*Yarr[0]+15.07*Yarr[1];	
-	if (ley > 0.1)
-		ley = 0.1;
-	else if (ley <-0.1)
-		ley = -0.1;
+	ley = 7.7652*Yarr[0]-6.5305*Yarr[1];	
+	if (ley > 0.4)
+		ley = 0.4;
+	else if (ley <-0.4)
+		ley = -0.4;
 	set_motor2(-ley);
 }
 
@@ -538,7 +538,7 @@ int main(void)
 		
 		leyDeControlX(axisValueXm);
 		leyDeControlY(axisValueYm);
-		//delaybyms(1);
+//		delaybyms(1);
 	
 //    if (bDeviceState == CONFIGURED)
 //    {
