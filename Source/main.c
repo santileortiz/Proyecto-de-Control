@@ -459,25 +459,25 @@ void rotArray(float *p_arr, int arr_len){
 void leyDeControlX(float xCoord){
 	float ley;
 	rotArray(Xarr, 2);
-	Xarr[0] = axisValueXm;
+	Xarr[0] = -axisValueXm;
 	ley = 7.7652*Xarr[0]-6.5305*Xarr[1];
 	if (ley > 0.4)
 		ley = 0.4;
 	else if (ley <-0.4)
 		ley = -0.4;
-	set_motor1(-ley);
+	set_motor1(ley);
 }
 
 void leyDeControlY(float yCoord){
 	float ley;
 	rotArray(Yarr, 2);
-	Yarr[0] = axisValueYm;
-	ley = 7.7652*Yarr[0]-6.5305*Yarr[1];	
+	Yarr[0] = -axisValueYm;
+	ley = 7.7652*Xarr[0]-6.5305*Xarr[1];
 	if (ley > 0.4)
 		ley = 0.4;
 	else if (ley <-0.4)
 		ley = -0.4;
-	set_motor2(-ley);
+	set_motor2(ley);
 }
 
 int main(void)
@@ -489,7 +489,7 @@ int main(void)
 //  USB_Init();
 	Servos_Config();
 	set_motor1(0.0f); //0.08726646f
-	set_motor2(0.0f);
+	set_motor2(-0.1f);
   /*!< At this stage the microcontroller clock setting is already configured, 
        this is done through SystemInit() function which is called from startup
        file (startup_stm32f30x.s) before to branch to application main.
@@ -537,8 +537,8 @@ int main(void)
 		ADC_DeInit (ADC2);
 		
 		leyDeControlX(axisValueXm);
-		leyDeControlY(axisValueYm);
-//		delaybyms(1);
+//		leyDeControlY(axisValueYm);
+		delaybyms(1);
 	
 //    if (bDeviceState == CONFIGURED)
 //    {
