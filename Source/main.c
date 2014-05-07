@@ -42,8 +42,8 @@ __IO uint32_t TimingDelay = 0;
 /*Variables para el control*/
 float theta1 = 0;
 float theta2 = 0;
-float Xarr[] = {0,0,0};
-float Yarr[] = {0,0,0};
+float Xerr[] = {0,0,0};
+float Yerr[] = {0,0,0};
 float theta1arr[] = {0,0};
 float theta2arr[] = {0,0};
 
@@ -167,8 +167,8 @@ void delaybyus(unsigned int j){
 void convParamSend(void){
 	SetX=(int8_t)(SetpointX/0.064960f);
 	SetY=(int8_t)(SetpointY/0.0484252f);
-	ServoX=(int8_t)(ServomotorX);
-	ServoY=(int8_t)(ServomotorY);
+	ServoX=(int8_t)(ServomotorX*57.2958);
+	ServoY=(int8_t)(ServomotorY*57.2958);
 	LocX=(int8_t)(PosX/0.064960f);
 	LocY=(int8_t)(PosY/0.0484252f);
 }
@@ -458,47 +458,41 @@ void rotArray(float *p_arr, int arr_len){
 
 void leyDeControlX(float xCoord){
 	float ley;
-//	rotArray(Xarr, 3);
-//	Xarr[0] = axisValueXm;
-//	ley = -10.219f*Xarr[0]+18.496f*Xarr[1]-8.6043f*Xarr[2]+1.996f*theta1arr[0]-0.99216f*theta1arr[1];
-//	if (ley > 0.2)
-//		ley = 0.2;
-//	else if (ley <-0.2)
-//		ley = -0.2;
-//	rotArray(theta1arr, 2);
-//	theta1arr[0] = ley;
-	set_motor1(-6.54498*axisValueXm);
-	if (ley > 0.523599)
-		ley = 0.523599;
-	else if (ley <-0.523599)
-		ley = -0.523599;
+	if(xCoord >= 0.087)
+		xCoord = Xerr[0];
+	rotArray(Xerr, 2);
+	Xerr[0] = 0.0f-xCoord;
+	ley = 7.7652*Xerr[0]-6.5305*Xerr[1];
+	if (ley > 0.4)
+		ley = 0.4;
+	else if (ley <-0.4)
+		ley = -0.4;
+	ServomotorX=ley;
+	set_motor1(ley-0.0249);
 }
 
 void leyDeControlY(float yCoord){
 	float ley;
-//	rotArray(Yarr, 3);
-//	Yarr[0] = axisValueYm;
-//	ley = -10.219f*Yarr[0]+18.496f*Yarr[1]-8.6043f*Yarr[2]+1.996f*theta2arr[0]-0.99216f*theta2arr[1];
-//	if (ley > 0.2)
-//		ley = 0.2;
-//	else if (ley <-0.2)
-//		ley = -0.2;
-//	rotArray(theta2arr, 2);
-//	theta2arr[0] = ley;
-	set_motor2(-8.37758*axisValueYm);
-	if (ley > 0.523599)
-		ley = 0.523599;
-	else if (ley <-0.523599)
-		ley = -0.523599;
+	if(yCoord >= 0.087)
+		yCoord = Yerr[0];
+	rotArray(Yerr, 2);
+	Yerr[0] = 0.0f-yCoord;
+	ley = 7.7652*Yerr[0]-6.5305*Yerr[1];
+	if (ley > 0.4)
+		ley = 0.4;
+	else if (ley <-0.4)
+		ley = -0.4;
+	ServomotorY=ley;
+	set_motor2(ley-0.0349);
 }
 
 int main(void)
 {
 
   Set_System();
-//  Set_USBClock();
-//  USB_Interrupts_Config();
-//  USB_Init();
+  Set_USBClock();
+  USB_Interrupts_Config();
+  USB_Init();
 	Servos_Config();
 	set_motor1(0.0f); //0.08726646f
 	set_motor2(0.0f);
@@ -531,9 +525,12 @@ int main(void)
     /* Compute the voltage */
 		axisValueXm = ((ADC1ConvertedValue-191.87f)/22248.0f)-0.083f;
 		
- 		ADC_DeInit (ADC1);
+		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
 		
+		delaybyus(500);
+		leyDeControlX(axisValueXm);
+
 		/*Reading Y Axis */
 		readYValue();
 		/* Test EOC flag */
@@ -548,40 +545,38 @@ int main(void)
 		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
 		
-		leyDeControlX(axisValueXm);
-		leyDeControlY(axisValueYm);
-		delaybyms(5);
+    leyDeControlY(axisValueYm);
+		delaybyus(500);
 	
-//    if (bDeviceState == CONFIGURED)
-//    {
-//			
-//			//CDC_Receive_DATA();
+    if (bDeviceState == CONFIGURED)
+    {
+			
+			CDC_Receive_DATA();
 
-//			SetpointX=(float)Receive_Buffer[0];
-//			SetpointX=SetpointX*0.064960f;
-//			SetpointY=(float)Receive_Buffer[1];
-//			SetpointY=SetpointY*0.0484252f;
-//			
-//			
+			SetpointX=(float)Receive_Buffer[0];
+			SetpointX=SetpointX*0.064960f;
+			SetpointY=(float)Receive_Buffer[1];
+			SetpointY=SetpointY*0.0484252f;
+			
+			
 
-//			PosX=(axisValueXm)*100.0f;
-//			PosY=(axisValueYm)*100.0f;
-//			
-//			convParamSend();
-//			
-//			Send_Buffer[0]=SetX;
-//			Send_Buffer[1]=SetY;
-//			Send_Buffer[2]=LocX;
-//			Send_Buffer[3]=LocY;
-//			Send_Buffer[4]=ServoX;
-//			Send_Buffer[5]=ServoY;
-//      /*Check to see if we have data yet */
-//      if(Receive_length!=0){
-//      if (packet_sent == 1)
-//      CDC_Send_DATA ((unsigned char*)Send_Buffer,6);
-//      Receive_length = 0;
-//		  }    
-//  }
+			PosX=(axisValueXm)*100.0f;
+			PosY=(axisValueYm)*100.0f;
+			
+			convParamSend();
+			
+			Send_Buffer[0]=SetX;
+			Send_Buffer[1]=SetY;
+			Send_Buffer[2]=LocX;
+			Send_Buffer[3]=LocY;
+			Send_Buffer[4]=ServoX;
+			Send_Buffer[5]=ServoY;
+      /*Check to see if we have data yet */
+      if(Receive_length!=0){
+      if (packet_sent == 1)
+      CDC_Send_DATA ((unsigned char*)Send_Buffer,6);
+      Receive_length = 0;
+		  }    
+  }
  }
 }
-
