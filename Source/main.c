@@ -28,7 +28,7 @@ int8_t ServoX;
 int8_t ServoY;
 
 /*Variables para USB*/
-extern __IO uint8_t Receive_Buffer[6];
+extern __IO int8_t Receive_Buffer[6];
 extern __IO  uint32_t Receive_length ;
 extern __IO  uint32_t length ;
 int8_t Send_Buffer[6];
@@ -477,7 +477,7 @@ void leyDeControlX(float xCoord){
 	
 	rotArray(Xerr, 2);
 	Xerr[0] = (SetpointX/100.0f)-prom;
-	ley = 7.7652*Xerr[0]-6.3125*Xerr[1];
+	ley = 7.7652*Xerr[0]-6.5125*Xerr[1];
 	if (ley > 0.4)
 		ley = 0.4;
 	else if (ley <-0.4)
@@ -496,13 +496,13 @@ void leyDeControlY(float yCoord){
 	
 	rotArray(Yerr, 2);
 	Yerr[0] = (SetpointY/100.0f)-prom;
-	ley = 7.7652*Yerr[0]-6.3125*Yerr[1];
+	ley = 7.7652*Yerr[0]-6.5125*Yerr[1];
 	if (ley > 0.4)
 		ley = 0.4;
 	else if (ley <-0.4)
 		ley = -0.4;
 	ServomotorY=ley;
-	set_motor2(ley-0.0349);
+	set_motor2((-ley)-0.0349);
 }
 
 int main(void)
@@ -572,8 +572,10 @@ int main(void)
 			
 			CDC_Receive_DATA();
 
+			SetpointX=(int8_t)Receive_Buffer[0];
 			SetpointX=(float)Receive_Buffer[0];
 			SetpointX=(float)SetpointX*0.064960f;
+			SetpointY=(int8_t)Receive_Buffer[1];
 			SetpointY=(float)Receive_Buffer[1];
 			SetpointY=(float)SetpointY*0.0484252f;
 			
