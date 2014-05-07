@@ -12,10 +12,10 @@
 #include "main.h"
 
 /*Variables para Controlador*/
-float SetpointX=3.3f;
-float SetpointY=6.5f;
-int8_t ServomotorX=90;
-int8_t ServomotorY=-90;
+float SetpointX=0.0f;
+float SetpointY=0.0f;
+float ServomotorX=90;
+float ServomotorY=-90;
 float PosX=0.1f;
 float PosY=0.1f;
 
@@ -44,6 +44,8 @@ float theta1 = 0;
 float theta2 = 0;
 float Xerr[] = {0,0,0};
 float Yerr[] = {0,0,0};
+float xCoords[] = {0, 0};
+float yCoords[] = {0, 0};
 float theta1arr[] = {0,0};
 float theta2arr[] = {0,0};
 
@@ -167,10 +169,19 @@ void delaybyus(unsigned int j){
 void convParamSend(void){
 	SetX=(int8_t)(SetpointX/0.064960f);
 	SetY=(int8_t)(SetpointY/0.0484252f);
-	ServoX=(int8_t)(ServomotorX*57.2958);
-	ServoY=(int8_t)(ServomotorY*57.2958);
+	ServoX=(int8_t)(ServomotorX*57.2958f)*4.2333f;
+	ServoY=(int8_t)(ServomotorY*57.2958f)*4.2333f;
 	LocX=(int8_t)(PosX/0.064960f);
 	LocY=(int8_t)(PosY/0.0484252f);
+
+	
+	Send_Buffer[0]=SetX;
+	Send_Buffer[1]=SetY;
+	Send_Buffer[2]=LocX;
+	Send_Buffer[3]=LocY;
+	Send_Buffer[4]=ServoX;
+	Send_Buffer[5]=ServoY;
+
 }
 	
 static void setupGpioAnalogPC4(void){
@@ -457,12 +468,16 @@ void rotArray(float *p_arr, int arr_len){
 }
 
 void leyDeControlX(float xCoord){
-	float ley;
+	float ley, prom;
 	if(xCoord >= 0.087)
-		xCoord = Xerr[0];
+		xCoord = xCoords[0];
+	rotArray(xCoords, 2);
+	xCoords[0] = xCoord;
+	prom = (xCoord + xCoords[1])/2;
+	
 	rotArray(Xerr, 2);
-	Xerr[0] = 0.0f-xCoord;
-	ley = 7.7652*Xerr[0]-6.5305*Xerr[1];
+	Xerr[0] = (SetpointX/100.0f)-prom;
+	ley = 7.7652*Xerr[0]-6.3125*Xerr[1];
 	if (ley > 0.4)
 		ley = 0.4;
 	else if (ley <-0.4)
@@ -472,12 +487,16 @@ void leyDeControlX(float xCoord){
 }
 
 void leyDeControlY(float yCoord){
-	float ley;
+	float ley, prom;
 	if(yCoord >= 0.087)
-		yCoord = Yerr[0];
+		yCoord = yCoords[0];
+	rotArray(yCoords, 2);
+	yCoords[0] = yCoord;
+	prom = (yCoord + yCoords[1])/2;
+	
 	rotArray(Yerr, 2);
-	Yerr[0] = 0.0f-yCoord;
-	ley = 7.7652*Yerr[0]-6.5305*Yerr[1];
+	Yerr[0] = (SetpointY/100.0f)-prom;
+	ley = 7.7652*Yerr[0]-6.3125*Yerr[1];
 	if (ley > 0.4)
 		ley = 0.4;
 	else if (ley <-0.4)
@@ -554,9 +573,9 @@ int main(void)
 			CDC_Receive_DATA();
 
 			SetpointX=(float)Receive_Buffer[0];
-			SetpointX=SetpointX*0.064960f;
+			SetpointX=(float)SetpointX*0.064960f;
 			SetpointY=(float)Receive_Buffer[1];
-			SetpointY=SetpointY*0.0484252f;
+			SetpointY=(float)SetpointY*0.0484252f;
 			
 			
 
@@ -565,12 +584,6 @@ int main(void)
 			
 			convParamSend();
 			
-			Send_Buffer[0]=SetX;
-			Send_Buffer[1]=SetY;
-			Send_Buffer[2]=LocX;
-			Send_Buffer[3]=LocY;
-			Send_Buffer[4]=ServoX;
-			Send_Buffer[5]=ServoY;
       /*Check to see if we have data yet */
       if(Receive_length!=0){
       if (packet_sent == 1)
