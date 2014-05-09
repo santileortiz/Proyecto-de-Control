@@ -11,7 +11,7 @@
 #include "stm32f30x.h"
 #include "main.h"
 
-/*Variables para Controlador*/
+/*Variables para enviar y recibir de Procedimientos del Controlador*/
 float SetpointX=0.0f;
 float SetpointY=0.0f;
 float ServomotorX=90;
@@ -19,7 +19,7 @@ float ServomotorY=-90;
 float PosX=0.1f;
 float PosY=0.1f;
 
-/*Variables para HMI*/
+/*Variables para ser enviadas al HMI*/
 int8_t SetX;
 int8_t SetY;
 int8_t LocX;
@@ -166,7 +166,9 @@ void delaybyus(unsigned int j){
     for(k=8;k!=0;k--); //8
 }
 
+/*Procedimiento que prepara salida de datos a HMI*/
 void convParamSend(void){
+	//Se escalan los datos a 8bits para su envío
 	SetX=(int8_t)(SetpointX/0.064960f);
 	SetY=(int8_t)(SetpointY/0.0484252f);
 	ServoX=(int8_t)(ServomotorX*57.2958f)*4.2333f;
@@ -174,7 +176,7 @@ void convParamSend(void){
 	LocX=(int8_t)(PosX/0.064960f);
 	LocY=(int8_t)(PosY/0.0484252f);
 
-	
+	//Se ingresan al buffer de envío.
 	Send_Buffer[0]=SetX;
 	Send_Buffer[1]=SetY;
 	Send_Buffer[2]=LocX;
@@ -507,71 +509,73 @@ void leyDeControlY(float yCoord){
 
 int main(void)
 {
-
+	//Se configuran los Timers e interrupciones necesarias
+	//para el funcionamiento del puerto USB
   Set_System();
   Set_USBClock();
   USB_Interrupts_Config();
-  USB_Init();
-	Servos_Config();
+  USB_Init(); //Se inicializa la comunicación USB
+	Servos_Config();	//Se inicializan los movimientos de los Servomotores
 	set_motor1(0.0f); //0.08726646f
 	set_motor2(0.0f);
-  /*!< At this stage the microcontroller clock setting is already configured, 
-       this is done through SystemInit() function which is called from startup
-       file (startup_stm32f30x.s) before to branch to application main.
-       To reconfigure the default setting of SystemInit() function, refer to
-       system_stm32f30x.c file
-     */ 
-  /* Setup SysTick Timer for 1 µsec interrupts  */
+
  if (SysTick_Config(SystemCoreClock / 1000000))
   { 
-    /* Capture error */ 
+    /* Capturar error en STM32 */ 
     while (1)
     {}
   }
 
-  /* Infinite loop */
+  /* Loop repetido infinitamente */
   while (1)
   {
 		
-		/*Reading X Axis */
+		/*Leyendo Eje X de Panel */
 		readXValue();
-    /* Test EOC flag */
+    /* Esperar hasta final de conversion */
     while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
 		
-    /* Get ADC1 converted data */
+    /* Guardando valor leido de Eje X */
     ADC1ConvertedValue =ADC_GetConversionValue(ADC1);
     
-    /* Compute the voltage */
+    /* Calculando la posicion correspondiente según caracterización */
 		axisValueXm = ((ADC1ConvertedValue-191.87f)/22248.0f)-0.083f;
 		
+		//Se configuran ADC para siguiente lectura
 		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
 		
+		//Se calcula el Control del Eje X según la posicion de la pelota
 		delaybyus(500);
 		leyDeControlX(axisValueXm);
 
-		/*Reading Y Axis */
+		/*Leyendo Eje Y del Panel */
 		readYValue();
-		/* Test EOC flag */
+		/* Esperar hasta el final de conversión */
 		while(ADC_GetFlagStatus(ADC2, ADC_FLAG_EOC) == RESET);
 		
-    /* Get ADC2 converted data */
+    /* Guardando valor ledio de Eje Y */
 		ADC1ConvertedValue2 =ADC_GetConversionValue(ADC2);
     
-    /* Compute the voltage */
+    /* Calculando la posición correspondiente según caracterización */
 		axisValueYm = ((ADC1ConvertedValue2-385.7f)/27229.0f)-0.0625f;
 
+		//Se configuran ADC para siguiente lectura
 		ADC_DeInit (ADC1);
 		ADC_DeInit (ADC2);
 		
+		//Se calcula el Control del Eje Y según la posision de la pelota
     leyDeControlY(axisValueYm);
 		delaybyus(500);
 	
+		//Se verifica estado del USB
     if (bDeviceState == CONFIGURED)
     {
-			
+			//Se reciben datos de nuevos SetPoint
 			CDC_Receive_DATA();
 
+			/*Se convierten los datos de 8 bits a las 
+			coordenadas correspondientes de cada eje*/
 			SetpointX=(int8_t)Receive_Buffer[0];
 			SetpointX=(float)Receive_Buffer[0];
 			SetpointX=(float)SetpointX*0.064960f;
@@ -580,15 +584,17 @@ int main(void)
 			SetpointY=(float)SetpointY*0.0484252f;
 			
 			
-
+			//Se escalan datos de M a CM para posición de la pelota
 			PosX=(axisValueXm)*100.0f;
 			PosY=(axisValueYm)*100.0f;
 			
+			//Se preparan datos para ser enviados al HMI
 			convParamSend();
 			
-      /*Check to see if we have data yet */
+      /*Se verifica si la recepción de datos fue correcta */
       if(Receive_length!=0){
       if (packet_sent == 1)
+			//Se envían los datos al HMI
       CDC_Send_DATA ((unsigned char*)Send_Buffer,6);
       Receive_length = 0;
 		  }    
