@@ -483,7 +483,7 @@ void leyDeControlX(float xCoord){
 	else if (ley <-0.4)
 		ley = -0.4;
 	ServomotorX=ley;
-	set_motor1(ley-0.0249);
+	set_motor2(-ley);
 }
 
 void leyDeControlY(float yCoord){
@@ -502,7 +502,7 @@ void leyDeControlY(float yCoord){
 	else if (ley <-0.4)
 		ley = -0.4;
 	ServomotorY=ley;
-	set_motor2((-ley)-0.0349);
+	set_motor1(-ley+0.013);
 }
 
 int main(void)
